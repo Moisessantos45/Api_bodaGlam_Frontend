@@ -1,6 +1,19 @@
+import { useEffect, useState } from "react";
 import Post from "../Components/Post";
+import { TypePost } from "../Types/types";
+import useUserStore from "../Store/UserStore";
 
 const Home = (): JSX.Element => {
+  const { dataPost, setFilterDataSearch } = useUserStore();
+  const [search, setSearch] = useState<string>("");
+  
+  useEffect(() => {
+    const filterDataResultSearch: TypePost[] = dataPost.filter((item) =>
+      item.titulo.toLowerCase().includes(search.toLowerCase())
+    );
+    setFilterDataSearch(filterDataResultSearch);
+  }, [search]);
+
   return (
     <>
       <main className="bg-white md:p-8 p-4 rounded-md w-full mt-5 md:mt-0">
@@ -25,8 +38,8 @@ const Home = (): JSX.Element => {
             <input
               className="bg-gray-50 outline-none ml-1 block w-full"
               type="text"
-              name=""
-              id=""
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               placeholder="search..."
             />
           </div>

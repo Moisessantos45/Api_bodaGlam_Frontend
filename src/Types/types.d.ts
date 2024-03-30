@@ -25,7 +25,7 @@ type UserTypesOmitPassword = Omit<User, "password">;
 
 type ConfigType = {
   headers: {
-    "content-Type": string;
+    "Content-Type": string;
     Authorization: string;
   };
   data: {

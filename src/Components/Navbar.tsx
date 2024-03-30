@@ -1,8 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
 import "../Css/Header.css";
 import { useState } from "react";
+import useUserStore from "../Store/UserStore";
 
 const Navbar = (): JSX.Element => {
+  const { logoutUser } = useUserStore();
   const [profile, setProfile] = useState(false);
 
   const navigate = useNavigate();
@@ -12,8 +14,7 @@ const Navbar = (): JSX.Element => {
   };
 
   const handleLogout = () => {
-    console.log("logout");
-    localStorage.removeItem("tokenUser");
+    logoutUser();
     navigate("/");
   };
   return (

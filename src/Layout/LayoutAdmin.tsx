@@ -1,10 +1,11 @@
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import Navbar from "../Components/Navbar";
 import useUserStore from "../Store/UserStore";
 import { useEffect } from "react";
+import Loading from "../Components/Loading";
 
 const LayoutAdmin = () => {
-  const { getDataUserandPost } = useUserStore();
+  const { dataUser, getDataUserandPost, loading } = useUserStore();
   useEffect(() => {
     try {
       const getDataUserAndPosts = async () => {
@@ -15,10 +16,11 @@ const LayoutAdmin = () => {
       return;
     }
   }, []);
+  if (loading) return <Loading />;
   return (
     <>
       <Navbar />
-      <Outlet />
+      {dataUser?.id && dataUser.active ? <Outlet /> : <Navigate to="/" />}
     </>
   );
 };

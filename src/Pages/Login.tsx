@@ -1,15 +1,38 @@
 import { useState } from "react";
 import "../Css/StyleForm.css";
 import { Link, useNavigate } from "react-router-dom";
+import toatifySuccess from "../Utils/Utils";
+import axios from "axios";
+import UrlApi from "../Config/UrlApi";
+import useUserStore from "../Store/UserStore";
 
 const Login = (): JSX.Element => {
+  const { setUser, setLoading } = useUserStore();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
 
-  const handelSubmit = (e: React.FormEvent) => {
+  const handelSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    navigate("/dashboard/1");
+    try {
+      const response = await UrlApi.post("Users/login", {
+        email,
+        password,
+      });
+      const data = response.data ? response.data : {};
+      setUser(data);
+      localStorage.setItem("tokenUser", data.token);
+      setLoading(true);
+      navigate(`/dashboard/${data.id}`);
+    } catch (error) {
+      if (error instanceof Error) {
+        toatifySuccess(error.message, false);
+        return;
+      } else if (axios.isAxiosError(error)) {
+        toatifySuccess(error.response?.data.msg, false);
+        return;
+      }
+    }
   };
 
   return (
