@@ -52,7 +52,7 @@
 
 @media (max-width: 768px) {
   .main__content-form {
-    min-height: 90vh;
+    min-height: 85vh;
   }
   .container-from {
     min-height: 550px;

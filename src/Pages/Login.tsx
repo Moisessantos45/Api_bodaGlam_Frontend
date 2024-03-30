@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "../Css/StyleForm.css";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = (): JSX.Element => {
   const [email, setEmail] = useState<string>("");
@@ -41,6 +41,9 @@ const Login = (): JSX.Element => {
             className="mt-2 h-10 w-full rounded-md text-gray-700 px-3 border border-slate-300 outline-none focus:ring"
           />
         </div>
+        <Link to="/register" className="text-center text-blue-500">
+          Create an account
+        </Link>
         <button
           type="submit"
           className="mt-8 w-full rounded-md bg-gradient-to-r from-violet-700 to-fuchsia-600 p-2 text-center font-semibold text-white outline-none focus:ring"

@@ -14,7 +14,7 @@ const LayoutAdmin = () => {
     } catch (error) {
       return;
     }
-  });
+  }, []);
   return (
     <>
       <Navbar />
