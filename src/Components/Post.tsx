@@ -2,15 +2,23 @@ import { useEffect, useRef } from "react";
 import ConfirmModal from "../Modal/ConfirmModal";
 import useUserStore from "../Store/UserStore";
 import EditModal from "../Modal/EditModal";
+import { TypePost } from "../Types/types";
+import useUserStorePost from "../Store/UserStorePost";
 
 const Post = (): JSX.Element => {
   const {
+    dataPost,
     filterDataSearch,
     confirmDelete,
+    setPost,
+    setPostEdit,
     setConfirmDelete,
+    openModal,
     openModalDelete,
+    setOpenModal,
     setOpenModalDelete,
   } = useUserStore();
+  const { changeStatus, deletePost } = useUserStorePost();
   const api = `${import.meta.env.VITE_HOST_API}/img/`;
 
   const statusAsignadoRef = useRef<boolean>(confirmDelete);
@@ -19,11 +27,24 @@ const Post = (): JSX.Element => {
     statusAsignadoRef.current = confirmDelete;
   }, [confirmDelete]);
 
+  const handleClickEdit = (item: TypePost) => {
+    setPostEdit(item);
+    setOpenModal(true);
+  };
+
+  const handleClickStatus = (id: string) => {
+    changeStatus(id);
+    const updateStatus: TypePost[] = dataPost.map((item) =>
+      item.id === id ? { ...item, status: !item.status } : item
+    );
+    setPost(updateStatus);
+  };
+
   const handleClickDetele = (id: string) => {
     setOpenModalDelete(true);
     setTimeout(() => {
       if (statusAsignadoRef.current) {
-        console.log(id);
+        deletePost(id);
         setConfirmDelete(false);
       }
     }, 5000);
@@ -91,30 +112,28 @@ const Post = (): JSX.Element => {
                     </p>
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    {iten.status ? (
-                      <>
-                        <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-                          <span className="absolute inset-0 bg-green-200 opacity-50 rounded-full" />
-                          <span className="relative">
-                            {JSON.stringify(iten.status)}
-                          </span>
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        <span className="relative inline-block px-3 py-1 font-semibold text-red-900 leading-tight">
-                          <span className="absolute inset-0 bg-red-200 opacity-50 rounded-full" />
-                          <span className="relative">
-                            {" "}
-                            {JSON.stringify(iten.status)}
-                          </span>
-                        </span>
-                      </>
-                    )}
+                    <span
+                      className={`relative inline-block px-3 py-1 ${
+                        iten.status ? "text-green-900" : "text-red-900"
+                      } font-semibold  leading-tight`}
+                      onClick={() => handleClickStatus(iten.id)}
+                    >
+                      <span
+                        className={`absolute inset-0 ${
+                          iten.status ? "bg-green-200" : "bg-red-200"
+                        }  opacity-50 rounded-full`}
+                      />
+                      <span className="relative">
+                        {JSON.stringify(iten.status)}
+                      </span>
+                    </span>
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <div className=" flex gap-3 justify-evenly">
-                      <button className="flex h-10 w-9 justify-center items-center bg-blue-500 text-white p-2 rounded-lg">
+                      <button
+                        className="flex h-10 w-9 justify-center items-center bg-blue-500 text-white p-2 rounded-lg"
+                        onClick={() => handleClickEdit(iten)}
+                      >
                         <i className="fa-solid fa-pencil text-base text-yellow-500" />
                       </button>
                       <button
@@ -146,7 +165,7 @@ const Post = (): JSX.Element => {
         </div>
       </div>
       {openModalDelete && <ConfirmModal />}
-      {/* <EditModal/> */}
+      {openModal && <EditModal />}
     </>
   );
 };

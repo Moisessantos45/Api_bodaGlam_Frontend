@@ -24,6 +24,7 @@ const Login = (): JSX.Element => {
       localStorage.setItem("tokenUser", data.token);
       setLoading(true);
       navigate(`/dashboard/${data.id}`);
+      toatifySuccess("Login successfully", true);
     } catch (error) {
       if (error instanceof Error) {
         toatifySuccess(error.message, false);

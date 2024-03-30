@@ -10,6 +10,9 @@ interface TypePost {
   status: boolean;
 }
 
+type TypePostOmitId = Omit<TypePost, "id" | "fecha">;
+type TypePostOmitIdAndIdUser = Omit<TypePost, "id" | "idUser" | "fecha">;
+
 interface User {
   id: string;
   nameUser: string;
@@ -17,9 +20,10 @@ interface User {
   password: string;
   avatar: string;
   token: string;
-  clave: string;
   active: boolean;
 }
+
+type TypeUserData = Omit<User, "id" | "token" | "active">;
 
 type UserTypesOmitPassword = Omit<User, "password">;
 
@@ -28,9 +32,14 @@ type ConfigType = {
     "Content-Type": string;
     Authorization: string;
   };
-  data: {
-    token: string;
-  };
 };
 
-export { TypePost, User, UserTypesOmitPassword, ConfigType };
+export {
+  TypePost,
+  TypePostOmitId,
+  TypeUserData,
+  TypePostOmitIdAndIdUser,
+  User,
+  UserTypesOmitPassword,
+  ConfigType,
+};

@@ -4,6 +4,7 @@ import { useState } from "react";
 import toatifySuccess from "../Utils/Utils";
 import axios from "axios";
 import UrlApi from "../Config/UrlApi";
+import { uploadAvatar } from "../Utils/Utils";
 
 const Register = (): JSX.Element => {
   const [avatarRender, setAvatarRender] = useState<string>("");
@@ -12,7 +13,6 @@ const Register = (): JSX.Element => {
   const [password, setPassword] = useState<string>("");
   const [profile, setProfile] = useState<File | null>(null);
   // const [avatar, setAvatar] = useState<File | null>(null);
-  const [clave, setClave] = useState<string>("");
 
   const navigate = useNavigate();
 
@@ -26,35 +26,11 @@ const Register = (): JSX.Element => {
     }
   };
 
-  const uploadAvatar = async (): Promise<string> => {
-    const presset = import.meta.env.VITE_PRESSET_API;
-    const name = import.meta.env.VITE_NAME_API;
-    try {
-      const api = `https://api.cloudinary.com/v1_1/${name}/image/upload`;
-      const formData = new FormData();
-      formData.append("file", profile as File);
-      formData.append("upload_preset", presset);
-      const response = await axios.post(api, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      const responseData = response.data ? response.data.secure_url : "";
-      return responseData;
-    } catch (error) {
-      if (error instanceof Error) {
-        toatifySuccess(error.message, false);
-        return "";
-      }
-    }
-    return "";
-  };
-
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement>
   ): Promise<void> => {
     e.preventDefault();
-    const values: string[] = [email, password, nameUser, clave];
+    const values: string[] = [email, password, nameUser];
     const verify = values.some((item) => item.trim() === "");
     if (verify) {
       return;
@@ -62,14 +38,13 @@ const Register = (): JSX.Element => {
     try {
       let avatar = "";
       if (profile !== null) {
-        avatar = await uploadAvatar();
+        avatar = await uploadAvatar(profile);
       }
       await UrlApi.post("Users/register", {
         nameUser,
         password,
         email,
         avatar,
-        clave,
       });
       navigate(`/`);
     } catch (error) {
@@ -84,13 +59,13 @@ const Register = (): JSX.Element => {
   };
   return (
     <div className="m-5 py-5">
-      <div className="space-y-3 lg:w-6/12 md:w-9/12 w-12/12 mx-auto rounded-md p-6 lg:p-5">
+      <div className="lg:w-6/12 md:w-9/12 w-12/12 mx-auto rounded-md p-6 lg:p-1 lg:px-5">
         <h1 className="sm:text-xl text-4xl font-bold lg:text-3xl gradient-text flex h-10">
           Register
         </h1>
       </div>
       <form
-        className="relative space-y-3 lg:w-6/12 md:w-9/12 w-12/12 mx-auto rounded-md p-6 lg:p-5 flex flex-col md:gap-4"
+        className="relative lg:w-6/12 md:w-9/12 w-12/12 mx-auto rounded-md p-6 lg:p-5 flex flex-col md:gap-4 lg:gap-1"
         onSubmit={handleSubmit}
       >
         <div>
@@ -120,16 +95,6 @@ const Register = (): JSX.Element => {
             placeholder="******"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-2 h-12 w-full rounded-md bg-gray-100 px-3"
-          />
-        </div>
-        <div>
-          <label className="text-neutral-700"> Key </label>
-          <input
-            type="text"
-            placeholder="key"
-            value={clave}
-            onChange={(e) => setClave(e.target.value)}
             className="mt-2 h-12 w-full rounded-md bg-gray-100 px-3"
           />
         </div>
