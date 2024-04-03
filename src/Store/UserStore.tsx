@@ -6,7 +6,6 @@ import {
   UserTypesOmitPassword,
 } from "../Types/types";
 import UrlApi from "../Config/UrlApi";
-import { redirect } from "react-router-dom";
 import toatifySuccess from "../Utils/Utils";
 
 type User = {
@@ -28,6 +27,8 @@ type User = {
   setOpenModalDelete: (data: boolean) => void;
   getDataUserandPost: () => Promise<void>;
   updateUser: (id: string, data: TypeUserData) => Promise<void>;
+  verifyEmail: (email: string) => Promise<string>;
+  retrievePassword: (token: string, password: string) => Promise<void>;
   deleteAccount: (id: string) => Promise<void>;
   logoutUser: () => Promise<void>;
 };
@@ -69,12 +70,11 @@ const useUserStore = create<User>()((set, get) => ({
 
       set({ dataUser: dataResUser });
       set({ dataPost: dataResPost });
-      set({ filterDataSearch: dataResPost });
+      // set({ filterDataSearch: dataResPost });
       set({ loading: false });
     } catch (error) {
       const { logoutUser } = get();
       await logoutUser();
-      return;
     }
   },
   updateUser: async (id, data) => {
@@ -94,13 +94,49 @@ const useUserStore = create<User>()((set, get) => ({
       const response = await UrlApi.put(`Users/updateUser/${id}`, data, confi);
       const dataRes = response.data ? response.data : {};
       set({ dataUser: dataRes });
+      toatifySuccess("Update user", true);
     } catch (error) {
       if (error instanceof Error) {
         toatifySuccess(error.message, false);
       }
     }
   },
-  deleteAccount: async (id) => {
+  verifyEmail: async (email): Promise<string> => {
+    try {
+      const response = await UrlApi.post("Users/retrieve-password", { email });
+      const data = response.data ? response.data : "";
+      toatifySuccess("valid email", true);
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        toatifySuccess(error.message, false);
+      }
+    }
+    return "";
+  },
+  retrievePassword: async (token, password): Promise<void> => {
+    try {
+      const confi: ConfigType = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const response = await UrlApi.post(
+        "Users/change-password",
+        { password },
+        confi
+      );
+      const msg = response.data ? response.data.msg : "";
+      toatifySuccess(msg, true);
+    } catch (error) {
+      if (error instanceof Error) {
+        toatifySuccess(error.message, false);
+      }
+    }
+  },
+  deleteAccount: async (id): Promise<void> => {
     try {
       const token = localStorage.getItem("tokenUser") || "";
       if (token === "") {
@@ -114,11 +150,12 @@ const useUserStore = create<User>()((set, get) => ({
           Authorization: `Bearer ${token}`,
         },
       };
-      await UrlApi.delete(`Users/deleteUser/${id}`, confi);
+      const response = await UrlApi.delete(`Users/deleteUser/${id}`, confi);
       set({ dataUser: {} as UserTypesOmitPassword });
       set({ dataPost: [] });
       localStorage.removeItem("tokenUser");
-      redirect("/");
+      const msg = response.data ? response.data.msg : "";
+      toatifySuccess(msg, true);
     } catch (error) {
       if (error instanceof Error) {
         toatifySuccess(error.message, false);
@@ -140,11 +177,12 @@ const useUserStore = create<User>()((set, get) => ({
         },
       };
       const { email } = get().dataUser;
-      await UrlApi.post(`logout?email=${email}`, confi);
+      await UrlApi.post(`Users/logout?email=${email}`, {}, confi);
       localStorage.removeItem("tokenUser");
-      redirect("/");
     } catch (error) {
-      return;
+      if (error instanceof Error) {
+        toatifySuccess(error.message, false);
+      }
     }
   },
 }));

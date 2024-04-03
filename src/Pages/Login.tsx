@@ -28,10 +28,8 @@ const Login = (): JSX.Element => {
     } catch (error) {
       if (error instanceof Error) {
         toatifySuccess(error.message, false);
-        return;
       } else if (axios.isAxiosError(error)) {
         toatifySuccess(error.response?.data.msg, false);
-        return;
       }
     }
   };
@@ -65,9 +63,14 @@ const Login = (): JSX.Element => {
             className="mt-2 h-10 w-full rounded-md text-gray-700 px-3 border border-slate-300 outline-none focus:ring"
           />
         </div>
-        <Link to="/register" className="text-center text-blue-500">
-          Create an account
-        </Link>
+        <div className=" flex justify-evenly gap-2">
+          <Link to="/register" className="text-center text-blue-500">
+            Create an account
+          </Link>
+          <Link to="/change-password" className="text-center text-blue-500">
+            Retrieve password
+          </Link>
+        </div>
         <button
           type="submit"
           className="mt-8 w-full rounded-md bg-gradient-to-r from-violet-700 to-fuchsia-600 p-2 text-center font-semibold text-white outline-none focus:ring"

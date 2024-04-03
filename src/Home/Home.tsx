@@ -2,17 +2,23 @@ import { useEffect, useState } from "react";
 import Post from "../Components/Post";
 import { TypePost } from "../Types/types";
 import useUserStore from "../Store/UserStore";
+import PostNavigation from "../Store/UserNavigation";
 
 const Home = (): JSX.Element => {
-  const { dataPost, setFilterDataSearch } = useUserStore();
+  const { dataPost, setOpenModal, setFilterDataSearch } = useUserStore();
+  const { setLength } = PostNavigation();
   const [search, setSearch] = useState<string>("");
-  
+
   useEffect(() => {
     const filterDataResultSearch: TypePost[] = dataPost.filter((item) =>
       item.titulo.toLowerCase().includes(search.toLowerCase())
     );
     setFilterDataSearch(filterDataResultSearch);
   }, [search]);
+
+  useEffect(() => {
+    setLength(dataPost.length);
+  }, []);
 
   return (
     <>
@@ -44,7 +50,10 @@ const Home = (): JSX.Element => {
             />
           </div>
           <div className=" space-x-8 md:col-start-3 col-start-2 row-start-1 w-auto justify-self-end">
-            <button className="bg-indigo-600 px-4 py-2 rounded-md text-white font-semibold tracking-wide cursor-pointer">
+            <button
+              className="bg-indigo-600 px-4 py-2 rounded-md text-white font-semibold tracking-wide cursor-pointer"
+              onClick={() => setOpenModal(true)}
+            >
               New Post
             </button>
           </div>

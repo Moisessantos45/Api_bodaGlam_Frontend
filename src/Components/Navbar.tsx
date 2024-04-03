@@ -4,7 +4,7 @@ import { useState } from "react";
 import useUserStore from "../Store/UserStore";
 
 const Navbar = (): JSX.Element => {
-  const { logoutUser } = useUserStore();
+  const { logoutUser,dataUser } = useUserStore();
   const [profile, setProfile] = useState(false);
 
   const navigate = useNavigate();
@@ -13,15 +13,15 @@ const Navbar = (): JSX.Element => {
     setProfile(!profile);
   };
 
-  const handleLogout = () => {
-    logoutUser();
+  const handleLogout = async () => {
+    await logoutUser();
     navigate("/");
   };
   return (
     <header className=" w-full p-2 text-center relative flex md:justify-center">
       <h1 className="text-indigo-900 font-bold text-3xl">BodaGlam</h1>
       <img
-        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ87ujTwkTXJCQjMYdykXuyDHOs2vitVA0BRQ&usqp=CAU"
+        src={dataUser.avatar}
         alt="logo"
         className="w-10 h-10 rounded-full right-3 top-2 absolute cursor-pointer"
         onClick={handleProfile}

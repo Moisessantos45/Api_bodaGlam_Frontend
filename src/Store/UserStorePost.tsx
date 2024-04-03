@@ -72,8 +72,10 @@ const useUserStorePost = create<Post>()(() => ({
           Authorization: `Bearer ${token}`,
         },
       };
-      await UrlApi.patch(`Post/${id}`, confi);
-      toatifySuccess("Status changed successfully", true);
+      const response = await UrlApi.patch(`Post/${id}`, {}, confi);
+      const msg = response.data ? response.data.msg : "";
+      toatifySuccess(msg, true);
+      // toatifySuccess("Status changed successfully", true);
     } catch (error) {
       if (error instanceof Error) {
         toatifySuccess(error.message, false);
@@ -92,8 +94,10 @@ const useUserStorePost = create<Post>()(() => ({
           Authorization: `Bearer ${token}`,
         },
       };
-      await UrlApi.delete(`Post/${id}`, confi);
-      toatifySuccess("Post deleted successfully", true);
+      const response = await UrlApi.delete(`Post/${id}`, confi);
+      const msg = response.data ? response.data.msg : "";
+      toatifySuccess(msg, true);
+      // toatifySuccess("Post deleted successfully", true);
     } catch (error) {
       if (error instanceof Error) {
         toatifySuccess(error.message, false);

@@ -5,6 +5,8 @@ import LayoutAdmin from "./Layout/LayoutAdmin";
 import Home from "./Home/Home";
 import Profile from "./Pages/Profile";
 import Register from "./Pages/Register";
+import RetrievePassword from "./Pages/RetrievePassword";
+import ChangePassword from "./Pages/ChangePassword";
 
 const App = createBrowserRouter([
   {
@@ -18,6 +20,14 @@ const App = createBrowserRouter([
       {
         path: "register",
         element: <Register />,
+      },
+      {
+        path: "change-password",
+        element: <RetrievePassword />,
+      },
+      {
+        path: "change-password/:token",
+        element: <ChangePassword />,
       },
     ],
   },

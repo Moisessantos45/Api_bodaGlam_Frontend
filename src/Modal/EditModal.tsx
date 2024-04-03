@@ -3,11 +3,21 @@ import useUserStore from "../Store/UserStore";
 import useUserStorePost from "../Store/UserStorePost";
 import toatifySuccess, { uploadAvatar } from "../Utils/Utils";
 import { TypePost } from "../Types/types";
+import close from "../Img/cerrar.png";
+import UseStateSocket from "../Store/useStateSocket";
 
 const EditModal = () => {
-  const { dataUser, dataPost, setPost, dataPosEdit, setOpenModal } =
-    useUserStore();
+  const {
+    dataUser,
+    dataPost,
+    setPost,
+    setFilterDataSearch,
+    dataPosEdit,
+    setPostEdit,
+    setOpenModal,
+  } = useUserStore();
   const { updatePost, addPost } = useUserStorePost();
+  const { emitir } = UseStateSocket();
   const [tipo, setTipo] = useState<string>("");
   const [imgRender, setImgRender] = useState<File | null>(null);
   const [imagenRender, setImagenRender] = useState<string>("");
@@ -42,9 +52,6 @@ const EditModal = () => {
     e.preventDefault();
     try {
       let imagen = dataPosEdit.id ? dataPosEdit.imagen : "";
-      if (imgRender !== null) {
-        imagen = await uploadAvatar(imgRender);
-      }
       const { idUser, ...rest } = {
         author,
         descripcion,
@@ -54,30 +61,54 @@ const EditModal = () => {
         titulo,
         idUser: dataUser.id,
       };
+      const verifyValues = Object.values(rest).some(
+        (item) => JSON.stringify(item).trim() === ""
+      );
+      if (verifyValues === true) {
+        toatifySuccess("All fields are required", false);
+        return;
+      }
+
+      if (imgRender !== null) {
+        imagen = await uploadAvatar(imgRender);
+      }
+
       if (id) {
-        const newPost: TypePost = await updatePost(id, { ...rest });
+        const newPost: TypePost = await updatePost(id, { ...rest, imagen });
         const newPostUpdates: TypePost[] = dataPost.map((item) =>
           item.id === id ? newPost : item
         );
         setPost(newPostUpdates);
+        setFilterDataSearch(newPostUpdates);
+        emitir("updatePost", newPostUpdates);
       } else {
-        const verifyValues = Object.values(rest).some(
-          (item) => item.trim() === ""
-        );
-        if (verifyValues === undefined) {
-          toatifySuccess("All fields are required", false);
-        } else {
-          const newPost: TypePost = await addPost({ ...rest, idUser });
-          const newPostAdd = [...dataPost, newPost];
-          setPost(newPostAdd);
-        }
+        const newPost: TypePost = await addPost({ ...rest, idUser, imagen });
+        const newPostAdd = [...dataPost, newPost];
+        setPost(newPostAdd);
+        setFilterDataSearch(newPostAdd);
+        emitir("newAddPost", newPostAdd);
       }
+      setPostEdit({} as TypePost);
+      setOpenModal(false);
     } catch (error) {
       if (error instanceof Error) {
         toatifySuccess(error.message, false);
       }
     }
   };
+
+  const handleClickClose = () => {
+    setOpenModal(false);
+    setAuthor("");
+    setTipo("");
+    setTitulo("");
+    setStatus("");
+    setdDscripcion("");
+    setImagenRender("");
+    setId(null);
+    setPostEdit({} as TypePost);
+  };
+
   return (
     <section className="flex md:p-3 p-2 justify-center top-0 left-0 fixed h-screen w-full z-20">
       <form
@@ -85,10 +116,10 @@ const EditModal = () => {
         onSubmit={handelSubmit}
       >
         <img
-          src=""
+          src={close}
           alt=""
           className="absolute w-6 h-6 sm:top-2 sm:right-[4%] right-3 top-5 cursor-pointer"
-          onClick={() => setOpenModal(false)}
+          onClick={handleClickClose}
         />
         <div className="w-full p-4 px-5 py-2">
           <div className="flex flex-row text-center">
@@ -99,8 +130,8 @@ const EditModal = () => {
           <div className="pb-1">
             <input
               type="text"
-              className="border rounded h-10 w-full focus:outline-none text-slate-400 focus:text-slate-700 focus:border-green-200 px-2 mt-2 text-sm"
-              placeholder="Tipo de post"
+              className="border rounded h-10 w-full focus:outline-none text-gray-600 focus:text-slate-700 focus:border-green-200 px-2 mt-2 text-sm"
+              placeholder="Title de post"
               value={titulo}
               onChange={(e) => setTitulo(e.target.value)}
             />
@@ -108,21 +139,21 @@ const EditModal = () => {
           <div className="grid md:grid-cols-4 md:gap-2">
             <input
               type="text"
-              className="border rounded h-10 w-full text-slate-400 focus:text-slate-700 focus:outline-none focus:border-green-200 px-2 mt-2 text-sm sm:col-start-1"
+              className="border rounded h-10 w-full text-gray-600 focus:text-slate-700 focus:outline-none focus:border-green-200 px-2 mt-2 text-sm sm:col-start-1"
               placeholder="tipo"
               value={tipo}
               onChange={(e) => setTipo(e.target.value)}
             />
             <input
               type="text"
-              className="border rounded sm:col-start-2 col-span-2 h-10 w-full text-slate-400 focus:text-slate-700  focus:outline-none focus:border-green-200 px-2 mt-2 text-sm"
+              className="border rounded sm:col-start-2 col-span-2 h-10 w-full text-gray-600 focus:text-slate-700  focus:outline-none focus:border-green-200 px-2 mt-2 text-sm"
               placeholder="Nombre del author"
               value={author}
               onChange={(e) => setAuthor(e.target.value)}
             />
             <input
               type="text"
-              className="border rounded h-10 w-full text-slate-400 focus:text-slate-700 focus:outline-none focus:border-green-200 px-2 mt-2 text-sm sm:col-start-4"
+              className="border rounded h-10 w-full text-gray-600 focus:text-slate-700 focus:outline-none focus:border-green-200 px-2 mt-2 text-sm sm:col-start-4"
               placeholder="status"
               value={status}
               onChange={(e) => setStatus(e.target.value)}

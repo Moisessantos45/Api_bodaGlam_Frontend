@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useUserStore from "../Store/UserStore";
 import { uploadAvatar } from "../Utils/Utils";
 import ConfirmModal from "../Modal/ConfirmModal";
@@ -19,7 +19,8 @@ const Profile = (): JSX.Element => {
   const [email, setEmail] = useState<string>(dataUser.email);
   const [password, setPassword] = useState<string>("");
   const [profile, setProfile] = useState<File | null>(null);
-  // const [avatar, setAvatar] = useState<File | null>(null);
+
+  const navigate = useNavigate();
 
   const statusAsignadoRef = useRef<boolean>(confirmDelete);
 
@@ -41,12 +42,13 @@ const Profile = (): JSX.Element => {
     statusAsignadoRef.current = confirmDelete;
   }, [confirmDelete]);
 
-  const handleClickDelete = (id: string): void => {
+  const handleClickDelete = async (id: string) => {
     setOpenModalDelete(true);
-    setTimeout(() => {
+    setTimeout(async () => {
       if (statusAsignadoRef.current) {
-        deleteAccount(id);
+        await deleteAccount(id);
         setConfirmDelete(false);
+        navigate("/");
       }
     }, 5000);
   };
@@ -69,8 +71,8 @@ const Profile = (): JSX.Element => {
   return (
     <>
       <div className="bg-white w-full flex flex-col gap-5 px-3 md:px-16 lg:px-28 md:flex-row text-[#161931] justify-center ">
-        <main className="w-full min-h-screen py-1 md:w-2/3 lg:w-3/4">
-          <div className="p-2 md:p-4 relative">
+        <main className="w-full min-h-screen py-1 md:w-10/12 lg:w-3/4">
+          <div className="p-2 md:p-4 relative flex justify-center">
             <form
               className="w-full px-6 pb-8 mt-8 sm:max-w-xl sm:rounded-lg"
               onSubmit={handleSubmit}
@@ -79,8 +81,8 @@ const Profile = (): JSX.Element => {
                 Public Profile
               </h2>
               <Link
-                to="/dashboard/1"
-                className=" absolute right-1 min-w-14 text-base font-medium text-indigo-100 focus:outline-none bg-[#202142] rounded-lg border border-indigo-200 hover:bg-indigo-900 focus:z-10 focus:ring-4 focus:ring-indigo-200 flex justify-center items-center"
+                to={`/dashboard/${dataUser.id}`}
+                className=" absolute right-1 min-w-14 min-h-5 text-base font-medium text-indigo-100 focus:outline-none bg-[#202142] rounded-lg border border-indigo-200 hover:bg-indigo-900 focus:z-10 focus:ring-4 focus:ring-indigo-200 flex justify-center items-center"
               >
                 <i className="fas fa-arrow-left text-xl"></i>
               </Link>
