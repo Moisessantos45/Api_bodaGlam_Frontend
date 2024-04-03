@@ -41,7 +41,7 @@ const Login = (): JSX.Element => {
         onSubmit={handelSubmit}
       >
         <p className="sm:text-xl text-4xl font-bold lg:text-3xl gradient-text text-center p-2">
-          Inciar sesion
+          Login
         </p>
         <div className="">
           <label className=" text-neutral-700"> Email Address </label>

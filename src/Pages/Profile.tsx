@@ -188,7 +188,7 @@ const Profile = (): JSX.Element => {
           </div>
         </main>
       </div>
-      {openModalDelete && <ConfirmModal />}
+      {openModalDelete && <ConfirmModal message="to delete your account" />}
     </>
   );
 };

@@ -119,14 +119,14 @@ const Register = (): JSX.Element => {
               />
             )}
             <p className="text-sm text-neutral-700">
-              Selecciona su foto de perfil
+              Select your profile picture
             </p>
             <div className=" p-2 mt-1 flex justify-center items-center w-full">
               <label
                 htmlFor="file-input"
                 className="text-white h-8 w-full outline-dotted flex justify-center items-center rounded-lg bg-indigo-600"
               >
-                Foto perfil
+                Profile picture
               </label>
               <input
                 type="file"

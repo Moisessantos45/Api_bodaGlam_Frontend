@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import Loading from "../Components/Loading";
 import UseStateSocket from "../Store/useStateSocket";
 
-const LayoutAdmin = () => {
+const LayoutAdmin = (): JSX.Element => {
   const { dataUser, getDataUserandPost, loading } = useUserStore();
   const { connect } = UseStateSocket();
   useEffect(() => {

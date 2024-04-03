@@ -5,8 +5,9 @@ import toatifySuccess, { uploadAvatar } from "../Utils/Utils";
 import { TypePost } from "../Types/types";
 import close from "../Img/cerrar.png";
 import UseStateSocket from "../Store/useStateSocket";
+import LoadingUploada from "../Components/LoadingUploada";
 
-const EditModal = () => {
+const EditModal = (): JSX.Element => {
   const {
     dataUser,
     dataPost,
@@ -24,8 +25,9 @@ const EditModal = () => {
   const [descripcion, setdDscripcion] = useState<string>("");
   const [titulo, setTitulo] = useState<string>("");
   const [author, setAuthor] = useState<string>("");
-  const [status, setStatus] = useState<string>("");
+  const [status, setStatus] = useState<string>("true");
   const [id, setId] = useState<string | null>(null);
+  const [loadingUploads, setLoadingUploads] = useState<boolean>(false);
 
   useEffect(() => {
     if (dataPosEdit?.id) {
@@ -51,6 +53,7 @@ const EditModal = () => {
   const handelSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      setLoadingUploads(true);
       let imagen = dataPosEdit.id ? dataPosEdit.imagen : "";
       const { idUser, ...rest } = {
         author,
@@ -90,6 +93,7 @@ const EditModal = () => {
       }
       setPostEdit({} as TypePost);
       setOpenModal(false);
+      setLoadingUploads(false);
     } catch (error) {
       if (error instanceof Error) {
         toatifySuccess(error.message, false);
@@ -111,6 +115,7 @@ const EditModal = () => {
 
   return (
     <section className="flex md:p-3 p-2 justify-center top-0 left-0 fixed h-screen w-full z-20">
+      {loadingUploads && <LoadingUploada />}
       <form
         className="md:flex relative bg-white shadow-lg rounded-lg mx-2 md:w-7/12 lg:w-6/12 w-12/12 overflow-y-auto scrollbar items-start"
         onSubmit={handelSubmit}
@@ -124,14 +129,14 @@ const EditModal = () => {
         <div className="w-full p-4 px-5 py-2">
           <div className="flex flex-row text-center">
             <h4 className="text-2xl text-green-400 font-semibold">
-              {id ? "Actualizar Post" : "Agregar Post"}
+              {id ? "Update Post" : "Add Post"}
             </h4>
           </div>
           <div className="pb-1">
             <input
               type="text"
               className="border rounded h-10 w-full focus:outline-none text-gray-600 focus:text-slate-700 focus:border-green-200 px-2 mt-2 text-sm"
-              placeholder="Title de post"
+              placeholder="Title post"
               value={titulo}
               onChange={(e) => setTitulo(e.target.value)}
             />
@@ -140,21 +145,21 @@ const EditModal = () => {
             <input
               type="text"
               className="border rounded h-10 w-full text-gray-600 focus:text-slate-700 focus:outline-none focus:border-green-200 px-2 mt-2 text-sm sm:col-start-1"
-              placeholder="tipo"
+              placeholder="Type"
               value={tipo}
               onChange={(e) => setTipo(e.target.value)}
             />
             <input
               type="text"
               className="border rounded sm:col-start-2 col-span-2 h-10 w-full text-gray-600 focus:text-slate-700  focus:outline-none focus:border-green-200 px-2 mt-2 text-sm"
-              placeholder="Nombre del author"
+              placeholder="Author´s name"
               value={author}
               onChange={(e) => setAuthor(e.target.value)}
             />
             <input
               type="text"
               className="border rounded h-10 w-full text-gray-600 focus:text-slate-700 focus:outline-none focus:border-green-200 px-2 mt-2 text-sm sm:col-start-4"
-              placeholder="status"
+              placeholder="Status"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
             />
@@ -180,7 +185,7 @@ const EditModal = () => {
                 htmlFor="file-input"
                 className="text-white h-8 w-10/12 outline-dotted flex justify-center items-center rounded-lg bg-indigo-600"
               >
-                Foto perfil
+                Profile picture
               </label>
               <input
                 type="file"
@@ -197,7 +202,7 @@ const EditModal = () => {
               value="Actualizar el volumen"
               className="h-10 w-48 rounded font-medium text-xs bg-blue-500 text-white"
             >
-              {id ? "Actualizar Post" : "Agregar Post"}
+              {id ? "Update Post" : "Add Post"}
             </button>
           </div>
         </div>

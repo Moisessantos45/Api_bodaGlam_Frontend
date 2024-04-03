@@ -1,6 +1,10 @@
 import useUserStore from "../Store/UserStore";
 
-const ConfirmModal = () => {
+interface TypeModal {
+  message: string;
+}
+
+const ConfirmModal: React.FC<TypeModal> = ({ message }): JSX.Element => {
   const { setConfirmDelete, setOpenModalDelete } = useUserStore();
   return (
     <section className=" flex justify-center items-center top-0 left-0 fixed z-30 h-screen w-full">
@@ -47,7 +51,7 @@ const ConfirmModal = () => {
               />
             </svg>
             <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-              Estas seguro?
+              You are sure {message}
             </h3>
             <button
               data-modal-hide="popup-modal"

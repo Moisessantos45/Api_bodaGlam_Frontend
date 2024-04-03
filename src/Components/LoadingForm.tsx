@@ -1,6 +1,6 @@
 import "../Css/styleFormLoading.css";
 
-const LoadingForm = () => {
+const LoadingForm = (): JSX.Element => {
   return (
     <article className="loading">
       <svg className="pl" width={240} height={240} viewBox="0 0 240 240">

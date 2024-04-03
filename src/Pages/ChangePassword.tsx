@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import useUserStore from "../Store/UserStore";
 
-const ChangePassword = () => {
+const ChangePassword = (): JSX.Element => {
   const { retrievePassword } = useUserStore();
   const { token } = useParams<{ token: string }>();
   const [password, setPassword] = useState<string>("");

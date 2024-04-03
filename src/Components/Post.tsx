@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import ConfirmModal from "../Modal/ConfirmModal";
 import useUserStore from "../Store/UserStore";
 import EditModal from "../Modal/EditModal";
@@ -25,6 +25,7 @@ const Post = (): JSX.Element => {
   const { emitir } = UseStateSocket();
   const { changeStatus, deletePost } = useUserStorePost();
   const { page, nextPageNavigation, prevPageNavigation } = PostNavigation();
+  const [textMessage, setTextMessage] = useState<string>("");
   // const api = `${import.meta.env.VITE_HOST_API}/img/`;
 
   const statusAsignadoRef = useRef<boolean>(confirmDelete);
@@ -46,6 +47,7 @@ const Post = (): JSX.Element => {
   };
 
   const handleClickStatus = (id: string) => {
+    setTextMessage("to disable it");
     setOpenModalDelete(true);
     setTimeout(() => {
       if (statusAsignadoRef.current) {
@@ -57,11 +59,13 @@ const Post = (): JSX.Element => {
         setFilterDataSearch(updateStatus);
         emitir("postStatusEmit", updateStatus);
         setConfirmDelete(false);
+        setTextMessage("");
       }
     }, 5000);
   };
 
   const handleClickDetele = (id: string) => {
+    setTextMessage("to remove it");
     setOpenModalDelete(true);
     setTimeout(() => {
       if (statusAsignadoRef.current) {
@@ -71,6 +75,7 @@ const Post = (): JSX.Element => {
         setPost(newPost);
         emitir("deletePostEmit", newPost);
         setConfirmDelete(false);
+        setTextMessage("")
       }
     }, 5000);
   };
@@ -112,7 +117,7 @@ const Post = (): JSX.Element => {
                           <img
                             className="w-full h-full rounded-full"
                             src={`${iten.imagen}`}
-                            alt=""
+                            alt={iten.titulo}
                           />
                         </div>
                         <div className="ml-3">
@@ -205,7 +210,7 @@ const Post = (): JSX.Element => {
           )}
         </div>
       </div>
-      {openModalDelete && <ConfirmModal />}
+      {openModalDelete && <ConfirmModal message={textMessage} />}
       {openModal && <EditModal />}
     </>
   );

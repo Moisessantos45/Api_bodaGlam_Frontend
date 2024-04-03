@@ -3,7 +3,7 @@ import "../Css/StyleForm.css";
 import useUserStore from "../Store/UserStore";
 import { useNavigate } from "react-router-dom";
 
-const RetrievePassword = () => {
+const RetrievePassword = (): JSX.Element => {
   const { verifyEmail } = useUserStore();
   const [email, setEmail] = useState<string>("");
   const navigate = useNavigate();
