@@ -33,7 +33,7 @@ const Register = (): JSX.Element => {
   ): Promise<void> => {
     e.preventDefault();
     const regex = /@gmail\.com$/;
-    if (regex.test(email)) {
+    if (!regex.test(email)) {
       toatifySuccess("Email invalid", false);
       return;
     }
